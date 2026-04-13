@@ -10,19 +10,17 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
   <style>
-    /* ── TOKENS ─────────────────────────────────────────────────── */
     :root {
-      --bg:        #0e0a0a;
-      --surface:   #1c1212;
-      --border:    #2e1f1f;
-      --yay:       #f5c842;
-      --yay-dim:   #7a6218;
-      --boo:       #e03535;
-      --boo-dim:   #6e1a1a;
-      --text:      #f2ece8;
-      --muted:     #7a6a65;
-      --curtain:   #8b1a1a;
-      --gold:      #d4a843;
+      --bg:         #0e0a0a;
+      --surface:    #1c1212;
+      --border:     #2e1f1f;
+      --yay:        #f5c842;
+      --yay-dim:    #7a6218;
+      --boo:        #e03535;
+      --boo-dim:    #6e1a1a;
+      --text:       #f2ece8;
+      --muted:      #7a6a65;
+      --gold:       #d4a843;
       --ff-display: 'Abril Fatface', serif;
       --ff-body:    'DM Sans', sans-serif;
     }
@@ -37,557 +35,236 @@
       overflow: hidden;
     }
 
-    /* ── CURTAIN BACKGROUND ─────────────────────────────────────── */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background:
         radial-gradient(ellipse 60% 50% at 50% 0%, rgba(139,26,26,0.18) 0%, transparent 70%),
-        repeating-linear-gradient(
-          90deg,
-          transparent 0px,
-          transparent 38px,
-          rgba(255,255,255,0.015) 38px,
-          rgba(255,255,255,0.015) 40px
-        );
-      pointer-events: none;
-      z-index: 0;
+        repeating-linear-gradient(90deg, transparent 0px, transparent 38px, rgba(255,255,255,0.015) 38px, rgba(255,255,255,0.015) 40px);
+      pointer-events: none; z-index: 0;
     }
 
-    /* ── VIEWS ──────────────────────────────────────────────────── */
+    /* ── VIEWS */
     .view {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100dvh;
-      padding: 2rem 1.5rem;
-      gap: 1.25rem;
-      text-align: center;
-      position: relative;
-      z-index: 1;
-      overflow-y: auto;
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      height: 100dvh; padding: 2rem 1.5rem; gap: 1.25rem; text-align: center;
+      position: relative; z-index: 1; overflow-y: auto;
     }
     .view.active { display: flex; }
 
-    /* ── TYPOGRAPHY ─────────────────────────────────────────────── */
-    .display {
-      font-family: var(--ff-display);
-      font-size: clamp(3rem, 12vw, 5.5rem);
-      line-height: 0.95;
-      letter-spacing: 0.01em;
-      color: var(--text);
-    }
-    .display em {
-      font-style: normal;
-      color: var(--gold);
-    }
-    .sub {
-      font-size: 0.9rem;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
+    /* ── TYPE */
+    .display { font-family: var(--ff-display); font-size: clamp(3rem, 12vw, 5.5rem); line-height: 0.95; }
+    .display em { font-style: normal; color: var(--gold); }
+    .sub { font-size: 0.9rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+    .divider { width: 48px; height: 2px; background: var(--border); border-radius: 2px; margin: 0.25rem auto; }
 
-    /* ── SPOTLIGHT ──────────────────────────────────────────────── */
     .spotlight {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
+      width: 180px; height: 180px; border-radius: 50%;
       background: radial-gradient(circle, rgba(245,200,66,0.12) 0%, transparent 70%);
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
+      position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
       pointer-events: none;
     }
 
-    /* ── DIVIDER ────────────────────────────────────────────────── */
-    .divider {
-      width: 48px;
-      height: 2px;
-      background: var(--border);
-      border-radius: 2px;
-      margin: 0.25rem auto;
-    }
-
-    /* ── BUTTONS ────────────────────────────────────────────────── */
+    /* ── HOME BUTTONS */
     .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      border: none;
-      border-radius: 0.9rem;
-      cursor: pointer;
-      font-family: var(--ff-body);
-      font-weight: 700;
-      font-size: 1.05rem;
-      padding: 1rem 1.5rem;
-      width: 100%;
-      max-width: 340px;
-      transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
-      letter-spacing: 0.02em;
-      text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      border: none; border-radius: 0.9rem; cursor: pointer;
+      font-family: var(--ff-body); font-weight: 700; font-size: 1.05rem;
+      padding: 1rem 1.5rem; width: 100%; max-width: 340px;
+      transition: transform 0.12s, box-shadow 0.12s; letter-spacing: 0.02em;
     }
     .btn:active { transform: scale(0.96); }
-
-    .btn-audience {
-      background: var(--yay);
-      color: #1a0e00;
-      font-size: 1.2rem;
-      padding: 1.15rem 1.5rem;
-      box-shadow: 0 4px 24px rgba(245,200,66,0.25);
-    }
+    .btn-audience { background: var(--yay); color: #1a0e00; font-size: 1.2rem; padding: 1.15rem 1.5rem; box-shadow: 0 4px 24px rgba(245,200,66,0.25); }
     .btn-audience:hover { box-shadow: 0 4px 32px rgba(245,200,66,0.4); }
-
-    .btn-backstage {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      font-size: 0.9rem;
-    }
+    .btn-backstage { background: transparent; color: var(--muted); border: 1px solid var(--border); font-size: 0.9rem; }
     .btn-backstage:hover { border-color: var(--muted); color: var(--text); }
 
-    /* ── AUDIENCE VOTE BUTTONS ──────────────────────────────────── */
-    .vote-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      width: 100%;
-      max-width: 360px;
-    }
+    /* ── VOTE BUTTONS */
+    .vote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; max-width: 360px; }
 
     .vote-btn {
-      border: none;
-      border-radius: 1.5rem;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      padding: 2rem 1rem;
-      height: 170px;
-      transition: transform 0.1s, filter 0.1s;
-      position: relative;
-      overflow: hidden;
+      border: none; border-radius: 1.5rem; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.4rem; padding: 2rem 1rem; height: 170px;
+      transition: transform 0.12s, opacity 0.3s, filter 0.3s, box-shadow 0.3s;
+      position: relative; overflow: visible;
     }
     .vote-btn:active { transform: scale(0.93); }
+    .vote-btn-yay { background: linear-gradient(160deg, #f5c842 0%, #d4a843 100%); box-shadow: 0 8px 32px rgba(245,200,66,0.3); }
+    .vote-btn-boo { background: linear-gradient(160deg, #e03535 0%, #a01f1f 100%); box-shadow: 0 8px 32px rgba(224,53,53,0.3); }
 
-    .vote-btn-yay {
-      background: linear-gradient(160deg, #f5c842 0%, #d4a843 100%);
-      box-shadow: 0 8px 32px rgba(245,200,66,0.3);
-    }
-    .vote-btn-boo {
-      background: linear-gradient(160deg, #e03535 0%, #a01f1f 100%);
-      box-shadow: 0 8px 32px rgba(224,53,53,0.3);
-    }
-
-    .vote-btn .icon   { font-size: 3.2rem; line-height: 1; }
-    .vote-btn .label  {
-      font-family: var(--ff-display);
-      font-size: 1.4rem;
-      color: #fff;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
+    .vote-btn .icon  { font-size: 3.2rem; line-height: 1; }
+    .vote-btn .label { font-family: var(--ff-display); font-size: 1.4rem; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
     .vote-btn-yay .label { color: #1a0e00; text-shadow: none; }
 
-    /* ripple */
-    .vote-btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: white;
+    /* selected / dimmed states */
+    .vote-btn.selected { box-shadow: 0 0 0 3px #fff, 0 8px 32px rgba(255,255,255,0.15); }
+    .vote-btn.dimmed   { opacity: 0.3; filter: saturate(0.3); transform: scale(0.96); }
+
+    .vote-hint { font-size: 0.8rem; color: var(--muted); min-height: 1.3rem; transition: opacity 0.3s; }
+
+    /* ── PARTICLES */
+    .particle {
+      position: fixed; pointer-events: none; z-index: 999;
+      font-size: 1.6rem; line-height: 1; user-select: none;
+      animation: particleFly var(--dur, 0.85s) ease-out forwards;
+      animation-delay: var(--delay, 0s);
       opacity: 0;
-      border-radius: inherit;
-      transition: opacity 0.3s;
     }
-    .vote-btn.tapped::after { opacity: 0.25; }
-
-    .vote-note {
-      font-size: 0.8rem;
-      color: var(--muted);
-      min-height: 1.4rem;
-      transition: opacity 0.3s;
+    @keyframes particleFly {
+      0%   { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3) rotate(var(--dr)); }
     }
 
-    /* ── BACK BUTTON ────────────────────────────────────────────── */
+    /* ── BACK BUTTON */
     .back-btn {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 50;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 0.6rem;
-      color: var(--muted);
-      font-family: var(--ff-body);
-      font-size: 0.8rem;
-      padding: 0.45rem 0.8rem;
-      cursor: pointer;
-      letter-spacing: 0.04em;
+      position: fixed; top: 1rem; left: 1rem; z-index: 50;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 0.6rem;
+      color: var(--muted); font-family: var(--ff-body); font-size: 0.8rem;
+      padding: 0.45rem 0.8rem; cursor: pointer; letter-spacing: 0.04em;
     }
     .back-btn:hover { color: var(--text); border-color: var(--muted); }
 
-    /* ── METER LAYOUT ───────────────────────────────────────────── */
-    .meter-header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.25rem;
-    }
-    .meter-title {
-      font-family: var(--ff-display);
-      font-size: clamp(1.6rem, 6vw, 2.4rem);
-      color: var(--gold);
-      letter-spacing: 0.04em;
-    }
+    /* ── METER LAYOUT */
+    .meter-header { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+    .meter-title  { font-family: var(--ff-display); font-size: clamp(1.6rem, 6vw, 2.4rem); color: var(--gold); }
 
-    .scores {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      width: 100%;
-      max-width: 380px;
+    /* alert banner */
+    .alert-banner {
+      width: 100%; max-width: 380px; border-radius: 1.2rem; padding: 0.9rem 1.25rem;
+      font-family: var(--ff-display); font-size: 1.4rem; line-height: 1.2;
+      display: none; text-align: center;
     }
+    .alert-banner.show { display: block; animation: bannerPop 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+    .alert-banner.love     { background: rgba(245,200,66,0.12); border: 1.5px solid var(--yay-dim); color: var(--yay); }
+    .alert-banner.boo-alert{ background: rgba(224,53,53,0.12);  border: 1.5px solid var(--boo-dim); color: var(--boo); }
+    @keyframes bannerPop { 0%{opacity:0;transform:scale(0.88)} 100%{opacity:1;transform:scale(1)} }
 
-    .score-card {
-      background: var(--surface);
-      border-radius: 1.2rem;
-      padding: 1.25rem 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.2rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .score-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      border: 1.5px solid transparent;
-    }
+    /* scores */
+    .scores { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; width: 100%; max-width: 380px; }
+    .score-card { background: var(--surface); border-radius: 1.2rem; padding: 1.25rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.2rem; position: relative; }
+    .score-card::before { content: ''; position: absolute; inset: 0; border-radius: inherit; border: 1.5px solid transparent; }
     .score-card.yay::before { border-color: var(--yay-dim); }
     .score-card.boo::before { border-color: var(--boo-dim); }
-
-    .score-card .icon   { font-size: 1.8rem; }
-    .score-card .num    {
-      font-family: var(--ff-display);
-      font-size: 3.8rem;
-      line-height: 1;
-      transition: color 0.3s;
-    }
+    .score-card .icon { font-size: 1.8rem; }
+    .score-card .num  { font-family: var(--ff-display); font-size: 3.8rem; line-height: 1; }
     .score-card.yay .num { color: var(--yay); }
     .score-card.boo .num { color: var(--boo); }
-    .score-card .tag    { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .score-card .tag  { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    @keyframes pulseNum { 0%,100%{transform:scale(1)} 50%{transform:scale(1.14)} }
+    .score-card.pulse .num { animation: pulseNum 0.35s ease; }
 
-    /* pulse on new vote */
-    @keyframes pulseYay { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
-    @keyframes pulseBoo { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
-    .score-card.yay.pulse .num { animation: pulseYay 0.35s ease; }
-    .score-card.boo.pulse .num { animation: pulseBoo 0.35s ease; }
+    /* bar */
+    .bar-wrap { width: 100%; max-width: 380px; }
+    .bar-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); margin-bottom: 0.4rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .bar-track { background: var(--boo-dim); border-radius: 999px; height: 14px; overflow: hidden; }
+    .bar-fill  { background: linear-gradient(90deg, var(--yay) 0%, #d4a843 100%); height: 100%; border-radius: 999px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); min-width: 6px; }
 
-    /* ── SENTIMENT BAR ──────────────────────────────────────────── */
-    .bar-wrap {
-      width: 100%;
-      max-width: 380px;
-    }
-    .bar-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.7rem;
-      color: var(--muted);
-      margin-bottom: 0.4rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .bar-track {
-      background: var(--boo-dim);
-      border-radius: 999px;
-      height: 14px;
-      overflow: hidden;
-      position: relative;
-    }
-    .bar-fill {
-      background: linear-gradient(90deg, var(--yay) 0%, #d4a843 100%);
-      height: 100%;
-      border-radius: 999px;
-      transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      min-width: 6px;
-    }
-
-    /* ── PERFORMER ROW ──────────────────────────────────────────── */
-    .performer-row {
-      display: flex;
-      gap: 0.6rem;
-      width: 100%;
-      max-width: 380px;
-    }
+    /* controls */
+    .meter-controls { display: flex; flex-direction: column; gap: 0.6rem; width: 100%; max-width: 380px; }
+    .performer-row  { display: flex; gap: 0.6rem; }
     .performer-input {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      color: var(--text);
-      font-family: var(--ff-body);
-      font-size: 0.95rem;
-      padding: 0.7rem 1rem;
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 0.75rem; color: var(--text); font-family: var(--ff-body);
+      font-size: 0.95rem; padding: 0.7rem 1rem;
     }
     .performer-input:focus { outline: 2px solid var(--gold); border-color: transparent; }
     .performer-input::placeholder { color: var(--muted); }
 
     .btn-reset {
-      background: transparent;
-      border: 1px solid var(--boo-dim);
-      border-radius: 0.75rem;
-      color: var(--boo);
-      font-family: var(--ff-body);
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 0.7rem 1rem;
-      cursor: pointer;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      transition: background 0.15s;
+      background: transparent; border: 1px solid var(--boo-dim); border-radius: 0.75rem;
+      color: var(--boo); font-family: var(--ff-body); font-size: 0.8rem; font-weight: 700;
+      padding: 0.7rem 1rem; cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase;
+      white-space: nowrap; transition: background 0.15s;
     }
     .btn-reset:hover { background: rgba(224,53,53,0.1); }
 
-    /* ── THRESHOLD BADGE ────────────────────────────────────────── */
-    .threshold-badge {
-      font-size: 0.72rem;
-      color: var(--muted);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.3rem 0.8rem;
-      letter-spacing: 0.04em;
+    /* audience size row */
+    .audience-row { display: flex; align-items: center; gap: 0.6rem; }
+    .audience-label { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+    .audience-input {
+      width: 80px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 0.75rem; color: var(--text); font-family: var(--ff-body);
+      font-size: 0.95rem; padding: 0.55rem 0.75rem; text-align: center;
     }
-    .threshold-badge strong { color: var(--gold); }
+    .audience-input:focus { outline: 2px solid var(--gold); border-color: transparent; }
+    .threshold-info { font-size: 0.75rem; color: var(--muted); }
+    .threshold-info strong { color: var(--gold); }
 
-    /* ── SOUND FLASH ────────────────────────────────────────────── */
-    .sound-flash {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 200;
-      opacity: 0;
-      transition: opacity 0.1s;
-      border-radius: 0;
-    }
-    .sound-flash.yay-flash { background: radial-gradient(ellipse at center, rgba(245,200,66,0.25), transparent 70%); }
-    .sound-flash.boo-flash { background: radial-gradient(ellipse at center, rgba(224,53,53,0.28), transparent 70%); }
-    .sound-flash.show { opacity: 1; }
+    /* performer label */
+    .performer-label { font-family: var(--ff-display); font-size: clamp(1.4rem,6vw,2rem); min-height: 2.4rem; }
+    .performer-label em { font-style: normal; color: var(--gold); }
 
-    /* ── MODAL ──────────────────────────────────────────────────── */
-    .modal-bg {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      backdrop-filter: blur(4px);
-    }
-    .modal-bg.open { display: flex; }
-
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 1.5rem;
-      padding: 2rem 1.75rem;
-      width: 100%;
-      max-width: 320px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      text-align: center;
-    }
-    .modal-icon { font-size: 2.5rem; }
-    .modal h3 {
-      font-family: var(--ff-display);
-      font-size: 1.5rem;
-      color: var(--gold);
-    }
-    .modal p { font-size: 0.85rem; color: var(--muted); }
-
-    .modal-input {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      color: var(--text);
-      font-family: var(--ff-body);
-      font-size: 1.1rem;
-      padding: 0.75rem 1rem;
-      text-align: center;
-      letter-spacing: 0.25em;
-    }
-    .modal-input:focus { outline: 2px solid var(--gold); border-color: transparent; }
-
-    .modal-error {
-      color: var(--boo);
-      font-size: 0.8rem;
-      min-height: 1rem;
-    }
-
-    .btn-enter {
-      background: var(--gold);
-      color: #1a0e00;
-      font-family: var(--ff-body);
-      font-weight: 700;
-      font-size: 1rem;
-      border: none;
-      border-radius: 0.75rem;
-      padding: 0.85rem 1.5rem;
-      width: 100%;
-      cursor: pointer;
-      letter-spacing: 0.04em;
-      transition: opacity 0.1s;
-    }
-    .btn-enter:hover { opacity: 0.88; }
-
-    .btn-cancel {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-family: var(--ff-body);
-      font-size: 0.85rem;
-      cursor: pointer;
-      padding: 0.25rem;
-    }
-    .btn-cancel:hover { color: var(--text); }
-
-    /* ── AUDIENCE PERFORMER LABEL ───────────────────────────────── */
-    .performer-label {
-      font-family: var(--ff-display);
-      font-size: clamp(1.4rem, 6vw, 2rem);
-      color: var(--text);
-      min-height: 2.4rem;
-    }
-    .performer-label em {
-      font-style: normal;
-      color: var(--gold);
-    }
-
-    /* ── CONNECTIONS STATUS ─────────────────────────────────────── */
-    .status-dot {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      background: var(--muted);
-      border-radius: 50%;
-      margin-right: 0.4rem;
-      vertical-align: middle;
-      transition: background 0.3s;
-    }
+    /* status dot */
+    .status-dot { display: inline-block; width: 7px; height: 7px; background: var(--muted); border-radius: 50%; margin-right: 0.4rem; vertical-align: middle; transition: background 0.3s; }
     .status-dot.live { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.6); }
 
-    /* ── TOAST ──────────────────────────────────────────────────── */
-    .toast {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.6rem 1.2rem;
-      font-size: 0.85rem;
-      color: var(--text);
-      z-index: 300;
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
-      opacity: 0;
-      white-space: nowrap;
-    }
+    /* modal */
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; padding: 1.5rem; backdrop-filter: blur(4px); }
+    .modal-bg.open { display: flex; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem 1.75rem; width: 100%; max-width: 320px; display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center; }
+    .modal-icon { font-size: 2.5rem; }
+    .modal h3   { font-family: var(--ff-display); font-size: 1.5rem; color: var(--gold); }
+    .modal p    { font-size: 0.85rem; color: var(--muted); }
+    .modal-input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 0.75rem; color: var(--text); font-family: var(--ff-body); font-size: 1.1rem; padding: 0.75rem 1rem; text-align: center; letter-spacing: 0.25em; }
+    .modal-input:focus { outline: 2px solid var(--gold); border-color: transparent; }
+    .modal-error { color: var(--boo); font-size: 0.8rem; min-height: 1rem; }
+    .btn-enter { background: var(--gold); color: #1a0e00; font-family: var(--ff-body); font-weight: 700; font-size: 1rem; border: none; border-radius: 0.75rem; padding: 0.85rem 1.5rem; width: 100%; cursor: pointer; transition: opacity 0.1s; }
+    .btn-enter:hover { opacity: 0.88; }
+    .btn-cancel { background: transparent; border: none; color: var(--muted); font-family: var(--ff-body); font-size: 0.85rem; cursor: pointer; }
+    .btn-cancel:hover { color: var(--text); }
+
+    /* toast */
+    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 0.6rem 1.2rem; font-size: 0.85rem; color: var(--text); z-index: 300; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s; opacity: 0; white-space: nowrap; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   </style>
 </head>
 <body>
 
-<!-- ── FLASH OVERLAY ───────────────────────────────────────────── -->
-<div class="sound-flash yay-flash" id="flash-yay"></div>
-<div class="sound-flash boo-flash" id="flash-boo"></div>
-
-<!-- ── TOAST ──────────────────────────────────────────────────── -->
 <div class="toast" id="toast"></div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     HOME VIEW
-════════════════════════════════════════════════════════════════ -->
+<!-- ══ HOME ═══════════════════════════════════════════════════════ -->
 <div class="view active" id="view-home">
   <div class="spotlight"></div>
-
   <p class="sub">🎭 Welcome to</p>
   <h1 class="display">Improv<br/><em>O-Meter</em></h1>
   <div class="divider"></div>
   <p class="sub">Let the performers know what you think</p>
-
-  <button class="btn btn-audience" onclick="showAudience()">
-    🙋 I'm in the Audience
-  </button>
-  <button class="btn btn-backstage" onclick="openPasswordModal()">
-    🎬 Backstage Access
-  </button>
+  <button class="btn btn-audience" onclick="showAudience()">🙋 I'm in the Audience</button>
+  <button class="btn btn-backstage" onclick="openPasswordModal()">🎬 Backstage Access</button>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     AUDIENCE VIEW
-════════════════════════════════════════════════════════════════ -->
+<!-- ══ AUDIENCE ════════════════════════════════════════════════════ -->
 <div class="view" id="view-audience">
   <button class="back-btn" onclick="showHome()">← Back</button>
-
-  <p class="sub">
-    <span class="status-dot" id="audience-status"></span>Live
-  </p>
+  <p class="sub"><span class="status-dot" id="audience-status"></span>Live</p>
   <div class="performer-label" id="audience-label">What do you think?</div>
   <p class="sub">Tap your verdict!</p>
 
   <div class="vote-grid">
-    <button class="vote-btn vote-btn-yay" id="btn-yay" onclick="castVote('yay')">
+    <button class="vote-btn vote-btn-yay" id="btn-yay" onclick="castVote('yay', event)">
       <span class="icon">👍</span>
       <span class="label">YAY!</span>
     </button>
-    <button class="vote-btn vote-btn-boo" id="btn-boo" onclick="castVote('boo')">
+    <button class="vote-btn vote-btn-boo" id="btn-boo" onclick="castVote('boo', event)">
       <span class="icon">👎</span>
       <span class="label">BOO!</span>
     </button>
   </div>
 
-  <p class="vote-note" id="vote-note"></p>
+  <p class="vote-hint" id="vote-hint"></p>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     METER VIEW
-════════════════════════════════════════════════════════════════ -->
+<!-- ══ METER ═══════════════════════════════════════════════════════ -->
 <div class="view" id="view-meter">
   <button class="back-btn" onclick="showHome()">← Back</button>
 
   <div class="meter-header">
-    <p class="sub">
-      <span class="status-dot" id="meter-status"></span>Live feed
-    </p>
+    <p class="sub"><span class="status-dot" id="meter-status"></span>Live feed</p>
     <h2 class="meter-title">Watch-O-Meter</h2>
   </div>
 
-  <div class="performer-row">
-    <input
-      class="performer-input"
-      id="performer-input"
-      type="text"
-      placeholder="Performer name…"
-      oninput="setPerformerName(this.value)"
-      maxlength="40"
-    />
-    <button class="btn-reset" onclick="resetVotes()">Reset</button>
-  </div>
+  <div class="alert-banner" id="alert-banner"></div>
 
   <div class="scores">
     <div class="score-card yay" id="card-yay">
@@ -603,35 +280,33 @@
   </div>
 
   <div class="bar-wrap">
-    <div class="bar-labels">
-      <span>👍 Yay</span>
-      <span>Boo 👎</span>
-    </div>
-    <div class="bar-track">
-      <div class="bar-fill" id="bar-fill" style="width:50%"></div>
-    </div>
+    <div class="bar-labels"><span>👍 Yay</span><span>Boo 👎</span></div>
+    <div class="bar-track"><div class="bar-fill" id="bar-fill" style="width:50%"></div></div>
   </div>
 
-  <p class="threshold-badge">
-    Sound triggers every <strong id="threshold-num">10</strong> votes
-  </p>
+  <div class="meter-controls">
+    <div class="performer-row">
+      <input class="performer-input" id="performer-input" type="text"
+             placeholder="Performer name…" oninput="setPerformerName(this.value)" maxlength="40" />
+      <button class="btn-reset" onclick="resetVotes()">Reset</button>
+    </div>
+    <div class="audience-row">
+      <span class="audience-label">Audience size:</span>
+      <input class="audience-input" id="audience-input" type="number" min="1"
+             placeholder="e.g. 80" oninput="setAudienceSize(this.value)" />
+      <span class="threshold-info" id="threshold-info">set size to enable alert</span>
+    </div>
+  </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     PASSWORD MODAL
-════════════════════════════════════════════════════════════════ -->
+<!-- ══ PASSWORD MODAL ══════════════════════════════════════════════ -->
 <div class="modal-bg" id="modal-bg">
   <div class="modal">
     <div class="modal-icon">🔐</div>
     <h3>Backstage</h3>
     <p>For show operators only</p>
-    <input
-      class="modal-input"
-      id="pw-input"
-      type="password"
-      placeholder="••••••"
-      onkeydown="if(event.key==='Enter') submitPassword()"
-    />
+    <input class="modal-input" id="pw-input" type="password" placeholder="••••••"
+           onkeydown="if(event.key==='Enter') submitPassword()" />
     <p class="modal-error" id="pw-error"></p>
     <button class="btn-enter" onclick="submitPassword()">Enter</button>
     <button class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -639,12 +314,9 @@
 </div>
 
 
-<!-- ══════════════════════════════════════════════════════════════
-     APP LOGIC
-════════════════════════════════════════════════════════════════ -->
 <script>
 // ================================================================
-//  ★  CONFIG — edit these values before deploying  ★
+//  ★  CONFIG — edit before deploying  ★
 // ================================================================
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyBYZXeBivsWQm7kHRXOIhaTTnEK8IdNCTc",
@@ -656,97 +328,53 @@ const FIREBASE_CONFIG = {
   appId:             "1:822686569264:web:3bbb555ad0357dab8deef5"
 };
 
-const BACKSTAGE_PASSWORD = "test";  // 🔐 change this!
-const SOUND_THRESHOLD    = 10;           // votes between each sound trigger
+const BACKSTAGE_PASSWORD = "backstage";   // 🔐 change this!
 // ================================================================
 
-// ── Firebase ────────────────────────────────────────────────────
 firebase.initializeApp(FIREBASE_CONFIG);
 const db          = firebase.database();
 const votesRef    = db.ref('votes');
 const nameRef     = db.ref('performerName');
+const audienceRef = db.ref('audienceSize');
 
-document.getElementById('threshold-num').textContent = SOUND_THRESHOLD;
+// ── NAV ──────────────────────────────────────────────────────────
+let meterActive   = false;
+let audienceActive = false;
 
-// ── State ────────────────────────────────────────────────────────
-let audioCtx        = null;
-let lastYaySound    = 0;
-let lastBooSound    = 0;
-let meterActive     = false;
-let audienceActive  = false;
-let firstMeterLoad  = true;
-
-// ── Navigation ──────────────────────────────────────────────────
 function showView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-
 function showHome()     { showView('view-home'); }
-function showAudience() {
-  showView('view-audience');
-  startAudienceListener();
-}
-function showMeter() {
-  showView('view-meter');
-  startMeterListener();
-}
+function showAudience() { showView('view-audience'); startAudienceListener(); }
+function showMeter()    { showView('view-meter');   startMeterListener(); }
 
-// ── Password Modal ───────────────────────────────────────────────
+// ── PASSWORD ─────────────────────────────────────────────────────
 function openPasswordModal() {
   document.getElementById('modal-bg').classList.add('open');
   document.getElementById('pw-input').value = '';
   document.getElementById('pw-error').textContent = '';
   setTimeout(() => document.getElementById('pw-input').focus(), 120);
 }
-
-function closeModal() {
-  document.getElementById('modal-bg').classList.remove('open');
-}
-
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
 function submitPassword() {
   const val = document.getElementById('pw-input').value;
-  if (val === BACKSTAGE_PASSWORD) {
-    closeModal();
-    firstMeterLoad = true;
-    showMeter();
-  } else {
+  if (val === BACKSTAGE_PASSWORD) { closeModal(); showMeter(); }
+  else {
     document.getElementById('pw-error').textContent = 'Wrong password — try again.';
     document.getElementById('pw-input').value = '';
     document.getElementById('pw-input').focus();
   }
 }
 
-// ── Audience Voting ──────────────────────────────────────────────
-let voteCooldown = false;
+// ── AUDIENCE: vote tracking ───────────────────────────────────────
+const VOTE_KEY = 'improv_vote';
+const YAY_POOL = ['👍','😄','🎉','⭐','😁','✨','🌟'];
+const BOO_POOL = ['👎','😤','😴','💤','😒','🥱','😑'];
 
-function castVote(type) {
-  if (voteCooldown) return;
-  voteCooldown = true;
-
-  const btn = document.getElementById(type === 'yay' ? 'btn-yay' : 'btn-boo');
-  btn.classList.add('tapped');
-  setTimeout(() => btn.classList.remove('tapped'), 300);
-
-  const note = document.getElementById('vote-note');
-  note.textContent = type === 'yay' ? '🎉 Yay cast!' : '😤 Boo cast!';
-
-  votesRef.child(type).set(firebase.database.ServerValue.increment(1))
-    .catch(() => {
-      note.textContent = '⚠️ Connection error — check Firebase config.';
-    });
-
-  setTimeout(() => {
-    voteCooldown = false;
-    note.textContent = '';
-  }, 1400);
-}
-
-// ── Audience name listener ───────────────────────────────────────
 function startAudienceListener() {
   if (audienceActive) return;
   audienceActive = true;
-
   nameRef.on('value', snap => {
     const name = snap.val() || '';
     const el = document.getElementById('audience-label');
@@ -754,52 +382,121 @@ function startAudienceListener() {
       ? `How's <em>${escHtml(name.trim())}</em> doing?`
       : 'What do you think?';
   });
-
   document.getElementById('audience-status').classList.add('live');
+  refreshVoteUI();
 }
 
-// ── Meter Listener ───────────────────────────────────────────────
+function getMyVote()    { return localStorage.getItem(VOTE_KEY); }
+function saveMyVote(v)  { v ? localStorage.setItem(VOTE_KEY, v) : localStorage.removeItem(VOTE_KEY); }
+
+function refreshVoteUI() {
+  const prev   = getMyVote();
+  const yayBtn = document.getElementById('btn-yay');
+  const booBtn = document.getElementById('btn-boo');
+  const hint   = document.getElementById('vote-hint');
+
+  yayBtn.classList.remove('selected','dimmed');
+  booBtn.classList.remove('selected','dimmed');
+
+  if (prev === 'yay') {
+    yayBtn.classList.add('selected');
+    booBtn.classList.add('dimmed');
+    hint.textContent = 'Changed your mind? Tap the other button.';
+  } else if (prev === 'boo') {
+    booBtn.classList.add('selected');
+    yayBtn.classList.add('dimmed');
+    hint.textContent = 'Changed your mind? Tap the other button.';
+  } else {
+    hint.textContent = '';
+  }
+}
+
+function castVote(type, event) {
+  const prev = getMyVote();
+  if (prev === type) return; // tapped same — no-op
+
+  const updates = {};
+  if (prev) updates[prev] = firebase.database.ServerValue.increment(-1); // undo old
+  updates[type] = firebase.database.ServerValue.increment(1);            // add new
+
+  votesRef.update(updates).catch(() => showToast('⚠️ Connection error'));
+  saveMyVote(type);
+  refreshVoteUI();
+  spawnParticles(event, type);
+}
+
+// ── PARTICLES ────────────────────────────────────────────────────
+function spawnParticles(event, type) {
+  const pool = type === 'yay' ? YAY_POOL : BOO_POOL;
+  const x = event.clientX, y = event.clientY;
+
+  for (let i = 0; i < 12; i++) {
+    const el    = document.createElement('span');
+    el.className = 'particle';
+    el.textContent = pool[Math.floor(Math.random() * pool.length)];
+
+    const angle = (Math.random() * 280) - 140;          // spread in a wide arc
+    const dist  = 70 + Math.random() * 130;
+    const rad   = (angle - 90) * Math.PI / 180;
+    const dx    = Math.cos(rad) * dist;
+    const dy    = Math.sin(rad) * dist;
+    const dr    = (Math.random() - 0.5) * 400;
+    const delay = Math.random() * 0.12;
+    const dur   = 0.65 + Math.random() * 0.45;
+    const size  = 1.1 + Math.random() * 1.0;
+
+    el.style.cssText = `
+      left: ${x}px; top: ${y}px;
+      --dx: ${dx}px; --dy: ${dy}px; --dr: ${dr}deg;
+      --dur: ${dur}s; --delay: ${delay}s;
+      font-size: ${size}rem;
+      animation-delay: ${delay}s;
+      animation-duration: ${dur}s;
+    `;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), (delay + dur) * 1000 + 100);
+  }
+}
+
+// ── METER LISTENER ────────────────────────────────────────────────
+let liveYay = 0, liveBoo = 0, liveAudienceSize = 0;
+let lastAlertState = null;
+
 function startMeterListener() {
   if (meterActive) return;
   meterActive = true;
 
   votesRef.on('value', snap => {
     const data = snap.val() || {};
-    const yay  = data.yay || 0;
-    const boo  = data.boo || 0;
+    liveYay = Math.max(0, data.yay || 0);
+    liveBoo = Math.max(0, data.boo || 0);
 
-    // Update UI
-    updateCount('yay-count', 'card-yay', yay);
-    updateCount('boo-count', 'card-boo', boo);
+    updateCount('yay-count', 'card-yay', liveYay);
+    updateCount('boo-count', 'card-boo', liveBoo);
 
-    const total = yay + boo;
-    const pct   = total === 0 ? 50 : Math.round(yay / total * 100);
+    const total = liveYay + liveBoo;
+    const pct   = total === 0 ? 50 : Math.round(liveYay / total * 100);
     document.getElementById('bar-fill').style.width = pct + '%';
-
     document.getElementById('meter-status').classList.add('live');
-
-    // Sound — skip on initial load to avoid replaying old counts
-    if (firstMeterLoad) {
-      lastYaySound = yay;
-      lastBooSound = boo;
-      firstMeterLoad = false;
-    } else {
-      checkSound(yay, boo);
-    }
+    checkAlert();
   });
 
-  // Sync performer name input
+  audienceRef.on('value', snap => {
+    liveAudienceSize = Math.max(0, snap.val() || 0);
+    const inp = document.getElementById('audience-input');
+    if (document.activeElement !== inp) inp.value = liveAudienceSize || '';
+    updateThresholdInfo(liveAudienceSize);
+    checkAlert();
+  });
+
   nameRef.on('value', snap => {
     const inp = document.getElementById('performer-input');
-    const remote = snap.val() || '';
-    if (document.activeElement !== inp) inp.value = remote;
+    if (document.activeElement !== inp) inp.value = snap.val() || '';
   });
 }
 
-let prevYay = 0, prevBoo = 0;
-
-function updateCount(id, cardId, val) {
-  const el = document.getElementById(id);
+function updateCount(numId, cardId, val) {
+  const el   = document.getElementById(numId);
   const card = document.getElementById(cardId);
   if (el.textContent !== String(val)) {
     el.textContent = val;
@@ -810,113 +507,66 @@ function updateCount(id, cardId, val) {
   }
 }
 
-// ── Sound Triggers ───────────────────────────────────────────────
-function checkSound(yay, boo) {
-  if (yay > 0 && Math.floor(yay / SOUND_THRESHOLD) > Math.floor(lastYaySound / SOUND_THRESHOLD)) {
-    lastYaySound = yay;
-    triggerFlash('yay');
-    playYay();
-    showToast('🎉 Crowd goes wild!');
+function updateThresholdInfo(size) {
+  const el = document.getElementById('threshold-info');
+  if (!size) { el.innerHTML = 'set size to enable alert'; return; }
+  const n = Math.ceil(size * 0.25);
+  el.innerHTML = `alert fires at <strong>${n} votes</strong> (25%)`;
+}
+
+// ── ALERT BANNER ─────────────────────────────────────────────────
+function checkAlert() {
+  const banner  = document.getElementById('alert-banner');
+  if (!liveAudienceSize) {
+    banner.className = 'alert-banner';
+    lastAlertState = null;
+    return;
   }
-  if (boo > 0 && Math.floor(boo / SOUND_THRESHOLD) > Math.floor(lastBooSound / SOUND_THRESHOLD)) {
-    lastBooSound = boo;
-    triggerFlash('boo');
-    playBoo();
-    showToast('😤 The crowd is unhappy…');
+  const trigger = Math.ceil(liveAudienceSize * 0.25);
+  const yayHit  = liveYay >= trigger;
+  const booHit  = liveBoo >= trigger;
+
+  if (yayHit && (!booHit || liveYay >= liveBoo)) {
+    if (lastAlertState !== 'love') {
+      lastAlertState = 'love';
+      banner.textContent = "🎉 They Love 'Em!";
+      banner.className = 'alert-banner love show';
+    }
+  } else if (booHit) {
+    if (lastAlertState !== 'boo') {
+      lastAlertState = 'boo';
+      banner.textContent = "😤 Get 'Em Off the Stage!";
+      banner.className = 'alert-banner boo-alert show';
+    }
+  } else {
+    banner.className = 'alert-banner';
+    lastAlertState = null;
   }
 }
 
-function triggerFlash(type) {
-  const el = document.getElementById(type === 'yay' ? 'flash-yay' : 'flash-boo');
-  el.classList.remove('show');
-  void el.offsetWidth;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 700);
-}
-
-// ── Reset + Performer Name ────────────────────────────────────────
+// ── CONTROLS ─────────────────────────────────────────────────────
 function resetVotes() {
   if (!confirm('Reset all vote counts to zero?')) return;
   votesRef.set({ yay: 0, boo: 0 });
-  lastYaySound = 0;
-  lastBooSound = 0;
-  firstMeterLoad = false; // don't suppress sound checks after reset
+  lastAlertState = null;
+  document.getElementById('alert-banner').className = 'alert-banner';
+}
+function setPerformerName(val) { nameRef.set(val.trim() || null); }
+function setAudienceSize(val)  {
+  const n = parseInt(val);
+  audienceRef.set(n > 0 ? n : null);
 }
 
-function setPerformerName(val) {
-  nameRef.set(val.trim() || null);
-}
-
-// ── Web Audio ────────────────────────────────────────────────────
-function getCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  return audioCtx;
-}
-
-function playYay() {
-  const ctx = getCtx();
-  // Triumphant ascending arpeggio: C E G C (major chord)
-  [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-    const osc  = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.type = 'sine';
-    osc.frequency.value = freq;
-    const t = ctx.currentTime + i * 0.14;
-    gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(0.32, t + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
-    osc.start(t); osc.stop(t + 0.55);
-  });
-}
-
-function playBoo() {
-  const ctx = getCtx();
-  // Classic sad trombone "wah-wah-wah-waaaah"
-  const wah = [
-    [0,    440, 392],
-    [0.28, 392, 349],
-    [0.56, 349, 311],
-    [0.84, 311, 196],
-  ];
-  wah.forEach(([start, from, to]) => {
-    const osc    = ctx.createOscillator();
-    const gain   = ctx.createGain();
-    const filter = ctx.createBiquadFilter();
-    osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
-    osc.type = 'sawtooth';
-    filter.type = 'bandpass'; filter.Q.value = 4;
-    filter.frequency.setValueAtTime(900, ctx.currentTime + start);
-    filter.frequency.linearRampToValueAtTime(400, ctx.currentTime + start + 0.26);
-    osc.frequency.setValueAtTime(from, ctx.currentTime + start);
-    osc.frequency.linearRampToValueAtTime(to,   ctx.currentTime + start + 0.26);
-    const t = ctx.currentTime + start;
-    gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(0.28, t + 0.03);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
-    osc.start(t); osc.stop(t + 0.32);
-  });
-}
-
-// unlock AudioContext on first tap
-document.addEventListener('click', () => {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-}, { once: true });
-
-// ── Toast ─────────────────────────────────────────────────────────
+// ── UTILS ─────────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
-
-// ── Utility ──────────────────────────────────────────────────────
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
-
 </body>
 </html>
