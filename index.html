@@ -413,7 +413,14 @@ function refreshVoteUI() {
 
 function castVote(type, event) {
   const prev = getMyVote();
-  if (prev === type) return; // tapped same — no-op
+  if (prev === type) {
+    // tapped same — clear vote
+    votesRef.update({ [type]: firebase.database.ServerValue.increment(-1) })
+      .catch(() => showToast('⚠️ Connection error'));
+    saveMyVote(null);
+    refreshVoteUI();
+    return;
+  }
 
   const updates = {};
   if (prev) updates[prev] = firebase.database.ServerValue.increment(-1); // undo old
