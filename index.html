@@ -97,7 +97,6 @@
     .vote-btn .label { font-family: var(--ff-display); font-size: 1.4rem; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
     .vote-btn-yay .label { color: #1a0e00; text-shadow: none; }
 
-    /* selected / dimmed states */
     .vote-btn.selected { box-shadow: 0 0 0 3px #fff, 0 8px 32px rgba(255,255,255,0.15); }
     .vote-btn.dimmed   { opacity: 0.3; filter: saturate(0.3); transform: scale(0.96); }
 
@@ -129,18 +128,16 @@
     .meter-header { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
     .meter-title  { font-family: var(--ff-display); font-size: clamp(1.6rem, 6vw, 2.4rem); color: var(--gold); }
 
-    /* alert banner */
     .alert-banner {
       width: 100%; max-width: 380px; border-radius: 1.2rem; padding: 0.9rem 1.25rem;
       font-family: var(--ff-display); font-size: 1.4rem; line-height: 1.2;
       display: none; text-align: center;
     }
-    .alert-banner.show { display: block; animation: bannerPop 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+    .alert-banner.show     { display: block; animation: bannerPop 0.45s cubic-bezier(0.34,1.56,0.64,1); }
     .alert-banner.love     { background: rgba(245,200,66,0.12); border: 1.5px solid var(--yay-dim); color: var(--yay); }
     .alert-banner.boo-alert{ background: rgba(224,53,53,0.12);  border: 1.5px solid var(--boo-dim); color: var(--boo); }
     @keyframes bannerPop { 0%{opacity:0;transform:scale(0.88)} 100%{opacity:1;transform:scale(1)} }
 
-    /* scores */
     .scores { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; width: 100%; max-width: 380px; }
     .score-card { background: var(--surface); border-radius: 1.2rem; padding: 1.25rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.2rem; position: relative; }
     .score-card::before { content: ''; position: absolute; inset: 0; border-radius: inherit; border: 1.5px solid transparent; }
@@ -154,13 +151,11 @@
     @keyframes pulseNum { 0%,100%{transform:scale(1)} 50%{transform:scale(1.14)} }
     .score-card.pulse .num { animation: pulseNum 0.35s ease; }
 
-    /* bar */
     .bar-wrap { width: 100%; max-width: 380px; }
     .bar-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); margin-bottom: 0.4rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .bar-track { background: var(--boo-dim); border-radius: 999px; height: 14px; overflow: hidden; }
     .bar-fill  { background: linear-gradient(90deg, var(--yay) 0%, #d4a843 100%); height: 100%; border-radius: 999px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); min-width: 6px; }
 
-    /* controls */
     .meter-controls { display: flex; flex-direction: column; gap: 0.6rem; width: 100%; max-width: 380px; }
     .performer-row  { display: flex; gap: 0.6rem; }
     .performer-input {
@@ -179,7 +174,6 @@
     }
     .btn-reset:hover { background: rgba(224,53,53,0.1); }
 
-    /* audience size row */
     .audience-row { display: flex; align-items: center; gap: 0.6rem; }
     .audience-label { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
     .audience-input {
@@ -191,15 +185,12 @@
     .threshold-info { font-size: 0.75rem; color: var(--muted); }
     .threshold-info strong { color: var(--gold); }
 
-    /* performer label */
     .performer-label { font-family: var(--ff-display); font-size: clamp(1.4rem,6vw,2rem); min-height: 2.4rem; }
     .performer-label em { font-style: normal; color: var(--gold); }
 
-    /* status dot */
     .status-dot { display: inline-block; width: 7px; height: 7px; background: var(--muted); border-radius: 50%; margin-right: 0.4rem; vertical-align: middle; transition: background 0.3s; }
     .status-dot.live { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.6); }
 
-    /* modal */
     .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; padding: 1.5rem; backdrop-filter: blur(4px); }
     .modal-bg.open { display: flex; }
     .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem 1.75rem; width: 100%; max-width: 320px; display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center; }
@@ -214,7 +205,6 @@
     .btn-cancel { background: transparent; border: none; color: var(--muted); font-family: var(--ff-body); font-size: 0.85rem; cursor: pointer; }
     .btn-cancel:hover { color: var(--text); }
 
-    /* toast */
     .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 0.6rem 1.2rem; font-size: 0.85rem; color: var(--text); z-index: 300; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s; opacity: 0; white-space: nowrap; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   </style>
@@ -336,9 +326,10 @@ const db          = firebase.database();
 const votesRef    = db.ref('votes');
 const nameRef     = db.ref('performerName');
 const audienceRef = db.ref('audienceSize');
+const roundRef    = db.ref('round');
 
 // ── NAV ──────────────────────────────────────────────────────────
-let meterActive   = false;
+let meterActive    = false;
 let audienceActive = false;
 
 function showView(id) {
@@ -367,14 +358,24 @@ function submitPassword() {
   }
 }
 
-// ── AUDIENCE: vote tracking ───────────────────────────────────────
-const VOTE_KEY = 'improv_vote';
-const YAY_POOL = ['👍','😄','🎉','⭐','😁','✨','🌟'];
-const BOO_POOL = ['👎','😤','😴','💤','😒','🥱','😑'];
+// ── VOTE STORAGE (round-aware) ────────────────────────────────────
+const VOTE_KEY   = 'improv_vote';
+const YAY_POOL   = ['👍','😄','🎉','⭐','😁','✨','🌟'];
+const BOO_POOL   = ['👎','😤','😴','💤','😒','🥱','😑'];
 
+function getMyVote() {
+  try { return JSON.parse(localStorage.getItem(VOTE_KEY)); } catch { return null; }
+}
+function saveMyVote(type, round) {
+  if (type) localStorage.setItem(VOTE_KEY, JSON.stringify({ vote: type, round }));
+  else       localStorage.removeItem(VOTE_KEY);
+}
+
+// ── AUDIENCE LISTENER ────────────────────────────────────────────
 function startAudienceListener() {
   if (audienceActive) return;
   audienceActive = true;
+
   nameRef.on('value', snap => {
     const name = snap.val() || '';
     const el = document.getElementById('audience-label');
@@ -382,54 +383,67 @@ function startAudienceListener() {
       ? `How's <em>${escHtml(name.trim())}</em> doing?`
       : 'What do you think?';
   });
+
+  // Watch the round — clear stale votes automatically
+  roundRef.on('value', snap => {
+    const currentRound = snap.val() || 0;
+    const saved = getMyVote();
+    if (saved && saved.round !== currentRound) saveMyVote(null);
+    refreshVoteUI();
+  });
+
   document.getElementById('audience-status').classList.add('live');
-  refreshVoteUI();
 }
 
-function getMyVote()    { return localStorage.getItem(VOTE_KEY); }
-function saveMyVote(v)  { v ? localStorage.setItem(VOTE_KEY, v) : localStorage.removeItem(VOTE_KEY); }
-
 function refreshVoteUI() {
-  const prev   = getMyVote();
+  const saved  = getMyVote();
+  const prev   = saved ? saved.vote : null;
   const yayBtn = document.getElementById('btn-yay');
   const booBtn = document.getElementById('btn-boo');
   const hint   = document.getElementById('vote-hint');
 
-  yayBtn.classList.remove('selected','dimmed');
-  booBtn.classList.remove('selected','dimmed');
+  yayBtn.classList.remove('selected', 'dimmed');
+  booBtn.classList.remove('selected', 'dimmed');
 
   if (prev === 'yay') {
     yayBtn.classList.add('selected');
     booBtn.classList.add('dimmed');
-    hint.textContent = 'Changed your mind? Tap the other button.';
+    hint.textContent = 'Tap again to clear, or switch your vote.';
   } else if (prev === 'boo') {
     booBtn.classList.add('selected');
     yayBtn.classList.add('dimmed');
-    hint.textContent = 'Changed your mind? Tap the other button.';
+    hint.textContent = 'Tap again to clear, or switch your vote.';
   } else {
     hint.textContent = '';
   }
 }
 
+// ── CASTING VOTES ────────────────────────────────────────────────
 function castVote(type, event) {
-  const prev = getMyVote();
-  if (prev === type) {
-    // tapped same — clear vote
-    votesRef.update({ [type]: firebase.database.ServerValue.increment(-1) })
-      .catch(() => showToast('⚠️ Connection error'));
-    saveMyVote(null);
+  roundRef.once('value').then(snap => {
+    const currentRound = snap.val() || 0;
+    const saved = getMyVote();
+    // Stale saved vote (round mismatch) — treat as no prior vote
+    const prev  = (saved && saved.round === currentRound) ? saved.vote : null;
+
+    if (prev === type) {
+      // Tapped same button — clear vote
+      votesRef.update({ [type]: firebase.database.ServerValue.increment(-1) })
+        .catch(() => showToast('⚠️ Connection error'));
+      saveMyVote(null);
+      refreshVoteUI();
+      return;
+    }
+
+    // Switch or fresh vote
+    const updates = {};
+    if (prev) updates[prev] = firebase.database.ServerValue.increment(-1);
+    updates[type] = firebase.database.ServerValue.increment(1);
+    votesRef.update(updates).catch(() => showToast('⚠️ Connection error'));
+    saveMyVote(type, currentRound);
     refreshVoteUI();
-    return;
-  }
-
-  const updates = {};
-  if (prev) updates[prev] = firebase.database.ServerValue.increment(-1); // undo old
-  updates[type] = firebase.database.ServerValue.increment(1);            // add new
-
-  votesRef.update(updates).catch(() => showToast('⚠️ Connection error'));
-  saveMyVote(type);
-  refreshVoteUI();
-  spawnParticles(event, type);
+    spawnParticles(event, type);
+  });
 }
 
 // ── PARTICLES ────────────────────────────────────────────────────
@@ -438,11 +452,11 @@ function spawnParticles(event, type) {
   const x = event.clientX, y = event.clientY;
 
   for (let i = 0; i < 12; i++) {
-    const el    = document.createElement('span');
+    const el = document.createElement('span');
     el.className = 'particle';
     el.textContent = pool[Math.floor(Math.random() * pool.length)];
 
-    const angle = (Math.random() * 280) - 140;          // spread in a wide arc
+    const angle = (Math.random() * 280) - 140;
     const dist  = 70 + Math.random() * 130;
     const rad   = (angle - 90) * Math.PI / 180;
     const dx    = Math.cos(rad) * dist;
@@ -523,7 +537,7 @@ function updateThresholdInfo(size) {
 
 // ── ALERT BANNER ─────────────────────────────────────────────────
 function checkAlert() {
-  const banner  = document.getElementById('alert-banner');
+  const banner = document.getElementById('alert-banner');
   if (!liveAudienceSize) {
     banner.className = 'alert-banner';
     lastAlertState = null;
@@ -555,6 +569,7 @@ function checkAlert() {
 function resetVotes() {
   if (!confirm('Reset all vote counts to zero?')) return;
   votesRef.set({ yay: 0, boo: 0 });
+  roundRef.set(firebase.database.ServerValue.increment(1)); // invalidates all stored votes
   lastAlertState = null;
   document.getElementById('alert-banner').className = 'alert-banner';
 }
